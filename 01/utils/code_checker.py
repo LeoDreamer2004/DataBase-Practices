@@ -14,7 +14,7 @@ class Code_Checker:
         expected_output: str,
         submission_id: int,
     ):
-        # 把字符串全部写入文件
+        # Write code and input data to files
         extensions = {"Python": "py", "C/C++": "cpp", "Java": "java"}
         extension = extensions[language]
         self.code_path = f"code{submission_id}.{extension}"
@@ -25,7 +25,7 @@ class Code_Checker:
 
         self.input_path = f"input{submission_id}.txt"
         with open(self.input_path, "w") as f:
-            f.write(input_data + "\n")  # 末尾加换行符，防止不同语言的输入函数阻塞
+            f.write(input_data + "\n")  # add '\n' to avoid EOF
 
         self.output_path = f"output{submission_id}.txt"
         self.output = expected_output
@@ -44,48 +44,47 @@ class Code_Checker:
         return self
 
     def test(self):
-        """启动代码测试，返回参数：(status, info, used_time, used_memory)"""
+        """Start the code test.
+        Returns: (status, info, used_time, used_memory)
+        """
         self.process = self.get_process()
         if self.process is None:
             return self.status, self.info, self.used_time, self.used_memory
 
-        # 启动计时器
+        # Start the timer
         timer = threading.Thread(target=self._timer_thread)
         timer.start()
         self.ptimer = psutil.Process(self.process.pid)
         self.start_time = time.perf_counter()
 
-        # 等待进程结束
+        # wait for the process to finish
         self.process.wait()
 
-        # 检查答案，输出结果
+        # check the answer
         self.check_answer()
         return self.status, self.info, self.used_time, self.used_memory
 
     def check_answer(self):
-        """检查答案"""
-        # 读取输出和错误信息
+        # read the output
         with open(self.output_path, "r") as f:
             stdout = f.read()
-        with open(self.error_path, "r") as f:
-            stderr = f.read()
 
         if self.process.returncode != 0:
             if self.info == "":
-                # 不是被计时器杀死，运行时出错
+                # Not killed by timer, which means it's a runtime error
                 self.status = "RE"
-                self.info = f"Runtime Error: {stderr}"
+                self.info = f"Runtime Error"
         elif stdout.strip() == self.output.strip():
-            # 运行成功，输出正确
+            # Accepted
             self.status = "AC"
-            self.info = "Answer Accepted."
+            self.info = "Answer Accepted"
         else:
-            # 运行成功，输出错误
+            # Wrong Answer
             self.status = "WA"
             self.info = self._check_difference(self.output, stdout)
             print(self.output.strip(), stdout.strip(), self.info)
 
-        # 删除临时文件
+        # Delete the temporary files
         os.remove(self.code_path)
         os.remove(self.input_path)
         os.remove(self.output_path)
@@ -96,7 +95,7 @@ class Code_Checker:
             os.remove(self.code_path[:-5] + ".class")
 
     def get_process(self):
-        """获取代码运行的进程"""
+        """Get the process of running the code"""
         if self.language == "Python":
             run_cmd = f"python {self.code_path} < {self.input_path} > {self.output_path} 2> {self.error_path}"
             return subprocess.Popen(run_cmd, shell=True)
@@ -105,12 +104,12 @@ class Code_Checker:
             compile_cmd = f"g++ {self.code_path} -o test.exe 2> {self.error_path}"
             process = subprocess.Popen(compile_cmd, shell=True)
             process.wait()
-            # 先检查编译是否成功
+            # check if compile error happens
             if process.returncode != 0:
                 self.status = "CE"
                 with open(self.error_path, "r") as f:
                     stderr = f.read()
-                self.info = f"Compile Error: {stderr}"
+                self.info = f"Compile Error"
                 return None
             run_cmd = (
                 f"test < {self.input_path} > {self.output_path} 2> {self.error_path}"
@@ -118,8 +117,8 @@ class Code_Checker:
             return subprocess.Popen(run_cmd, shell=True)
 
     def _timer_thread(self):
-        """计时器线程，当超时/超内存时杀死进程"""
-        time.sleep(0.01)  # 等待进程启动
+        """A timer thread, which will terminate the testing process when time limit is exceeded"""
+        time.sleep(0.01)  # wait for the process to start
         while self.process.poll() is None:
             try:
                 self.used_time = int((time.perf_counter() - self.start_time) * 1000)
@@ -136,12 +135,11 @@ class Code_Checker:
                     self.status = "MLE"
                     self.info = "Memory Limit Exceeded"
                     return
-                time.sleep(0.001)  # 降低CPU占用
+                time.sleep(0.001)  # reduce CPU usage
             except psutil.NoSuchProcess:
                 return  # ignore
 
     def _terminate_testing(self):
-        """终止测试"""
         parent = psutil.Process(self.process.pid)
         for child in parent.children(recursive=True):
             child.terminate()
@@ -149,7 +147,7 @@ class Code_Checker:
 
     @staticmethod
     def _check_difference(expected: str, actual: str):
-        """比较预期输出和实际输出的不同，返回规范化字符串"""
+        """Return the difference between expected and actual output"""
         expected_lines = expected.split("\n")
         actual_lines = actual.split("\n")
         for i in range(min(len(expected_lines), len(actual_lines))):
