@@ -1,17 +1,29 @@
 from faker import Faker
 import csv
+import random
+import string
 
 fake = Faker()
 
-# Generate 100 unique English names
-names = set()
+# Generate 100 unique English names, passwords and grades
+persons = set()
+grades = ['beginner', 'intermediate', 'advanced', 'expert']
 
-while len(names) < 100:
-    names.add(fake.name())
+def generate_random_string():
+    length = random.randint(8, 12)
+    possible_characters = string.ascii_letters + string.digits
+    random_string = ''.join(random.choice(possible_characters) for _ in range(length))
+    return random_string
 
-# Write the names to a CSV file
-with open('names.csv', 'w') as f:
+while len(persons) < 100:
+    name = fake.name()
+    password = generate_random_string()
+    grade = random.choice(grades)
+    persons.add((name, password, grade))
+
+# Write the names, passwords and grades to a CSV file
+with open('person.csv', 'w') as f:
     writer = csv.writer(f)
-    writer.writerow(['Name'])
-    for name in names:
-        writer.writerow([name])
+    writer.writerow(['Name', 'Password', 'Grade'])
+    for name, password, grade in persons:
+        writer.writerow([name, password, grade])
