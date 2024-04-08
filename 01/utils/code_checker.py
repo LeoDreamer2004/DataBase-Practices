@@ -6,6 +6,8 @@ import psutil
 
 
 class Code_Checker:
+    FOLDER = "_temp_codes"
+
     def set_io(
         self,
         code: str,
@@ -14,23 +16,26 @@ class Code_Checker:
         expected_output: str,
         submission_id: int,
     ):
+        if not os.path.exists(self.FOLDER):
+            os.mkdir(self.FOLDER)
+
         # Write code and input data to files
         extensions = {"Python": "py", "C/C++": "cpp", "Java": "java"}
         extension = extensions[language]
-        self.code_path = f"code{submission_id}.{extension}"
+        self.code_path = self.FOLDER + f"code{submission_id}.{extension}"
         with open(self.code_path, "w") as f:
             f.write(code)
 
         self.language = language
 
-        self.input_path = f"input{submission_id}.txt"
+        self.input_path = self.FOLDER + f"input{submission_id}.txt"
         with open(self.input_path, "w") as f:
             f.write(input_data + "\n")  # add '\n' to avoid EOF
 
-        self.output_path = f"output{submission_id}.txt"
+        self.output_path = self.FOLDER + f"output{submission_id}.txt"
         self.output = expected_output
 
-        self.error_path = f"error{submission_id}.txt"
+        self.error_path = self.FOLDER + f"error{submission_id}.txt"
 
         self.status = "P"
         self.info = ""
