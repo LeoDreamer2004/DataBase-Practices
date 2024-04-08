@@ -22,7 +22,9 @@ jobs:
         - name: Clear IPython output
           run: |
             jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace $(git ls-files '*.ipynb')
-            git config --global user.name "GitHub Actions"
-            git config --global user.email "actions@github.com"
-            git commit -am "Clear IPython output" || true
-            git push || true
+        - name: Commit changes
+          uses: stefanzweifel/git-auto-commit-action@v4
+          with:
+            commit_message: Clear ipynb output
+            commit_options: '--no-verify --signoff'
+            file_pattern: '*.ipynb'
