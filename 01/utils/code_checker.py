@@ -82,7 +82,6 @@ class Code_Checker:
             # Wrong Answer
             self.status = "WA"
             self.info = self._check_difference(self.output, stdout)
-            print(self.output.strip(), stdout.strip(), self.info)
 
         # Delete the temporary files
         os.remove(self.code_path)
@@ -91,8 +90,6 @@ class Code_Checker:
         os.remove(self.error_path)
         if self.language == "C/C++":
             os.remove("test.exe")
-        elif self.language == "Java":
-            os.remove(self.code_path[:-5] + ".class")
 
     def get_process(self):
         """Get the process of running the code"""
@@ -115,6 +112,12 @@ class Code_Checker:
                 f"test < {self.input_path} > {self.output_path} 2> {self.error_path}"
             )
             return subprocess.Popen(run_cmd, shell=True)
+
+        elif self.language == "Java":
+            # Use java XXX.java directly
+            run_cmd = f"java {self.code_path} < {self.input_path} > {self.output_path} 2> {self.error_path}"
+            return subprocess.Popen(run_cmd, shell=True)
+        
 
     def _timer_thread(self):
         """A timer thread, which will terminate the testing process when time limit is exceeded"""
