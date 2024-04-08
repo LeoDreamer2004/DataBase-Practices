@@ -12,25 +12,25 @@ class Code_Checker:
         language: str,
         input_data: str,
         expected_output: str,
-        code_id: int,
+        submission_id: int,
     ):
         # 把字符串全部写入文件
         extensions = {"Python": "py", "C/C++": "cpp", "Java": "java"}
         extension = extensions[language]
-        self.code_path = f"code{code_id}.{extension}"
+        self.code_path = f"code{submission_id}.{extension}"
         with open(self.code_path, "w") as f:
             f.write(code)
 
         self.language = language
 
-        self.input_path = f"input{code_id}.txt"
+        self.input_path = f"input{submission_id}.txt"
         with open(self.input_path, "w") as f:
             f.write(input_data + "\n")  # 末尾加换行符，防止不同语言的输入函数阻塞
 
-        self.output_path = f"output{code_id}.txt"
+        self.output_path = f"output{submission_id}.txt"
         self.output = expected_output
 
-        self.error_path = f"error{code_id}.txt"
+        self.error_path = f"error{submission_id}.txt"
 
         self.status = "P"
         self.info = ""
@@ -89,6 +89,7 @@ class Code_Checker:
         os.remove(self.code_path)
         os.remove(self.input_path)
         os.remove(self.output_path)
+        os.remove(self.error_path)
         if self.language == "C/C++":
             os.remove("test.exe")
         elif self.language == "Java":

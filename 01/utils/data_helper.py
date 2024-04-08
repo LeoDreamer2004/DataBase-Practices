@@ -1,4 +1,7 @@
-def fetch_cursor(cursor):
+from pymysql.cursors import Cursor
+
+
+def fetch_cursor(cursor: Cursor):
     """
     Combine the description and data by pymysql to a list of dictionary.
     >>> a = cursor.description
@@ -7,7 +10,7 @@ def fetch_cursor(cursor):
     >>> b = cursor.fetchall()
     >>> b
     ((1, 'Alice'), (2, 'Bob'))
-    >>> build_lines_data(cursor)
+    >>> fetch_cursor(cursor)
     [{'id': 1, 'name': 'Alice'}, {'id': 2, 'name': 'Bob'}]
     """
     description = cursor.description
