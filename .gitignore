@@ -155,4 +155,7 @@ cython_debug/
 temp.*
 temp/
 tmp.*
+
 tmp/
+_temp_codes/
+.idea
