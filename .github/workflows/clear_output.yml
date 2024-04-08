@@ -1,10 +1,15 @@
-name: clear_output
+name: Clear output
 
-on: [push]
+on: [push, pull_request]
 
 jobs: 
-    build:
+    clear_output:
         runs-on: ubuntu-latest
+
+        permissions:
+            contents: write
+            pull-requests: write
+
         steps:
         - name: Checkout repository
           uses: actions/checkout@v3
@@ -23,7 +28,7 @@ jobs:
           run: |
             jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace $(git ls-files '*.ipynb')
         - name: Commit changes
-          uses: stefanzweifel/git-auto-commit-action@v4
+          uses: stefanzweifel/git-auto-commit-action@v5
           with:
             commit_message: Clear ipynb output
             commit_options: '--no-verify --signoff'
