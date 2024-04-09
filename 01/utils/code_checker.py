@@ -1,3 +1,6 @@
+# Copyright: MIT by LeoDreamer (2023)
+# A checker for code testing, including compile error, runtime error, time limit exceeded, memory limit exceeded, wrong answer, and accepted.
+
 import os
 import subprocess
 import threading

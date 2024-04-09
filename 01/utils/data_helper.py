@@ -20,31 +20,47 @@ def fetch_cursor(cursor: Cursor):
     return [dict(zip([x[0] for x in description], row)) for row in data]
 
 
-URL = "mysql+pymysql://practice:123456@127.0.0.1:3306/practice1"
+URL = ""
+
+
+def setURL(user, password, host, port, database):
+    global URL
+    URL = f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}"
 
 
 def csv2sql(file_path: str, table_name: str):
     """
     Read a csv file and write it to a table in the database.
     Use `csv2sql_submission()` instead to write the submission table.
+    Use `csv2sql_IOpair()` instead to write the IOpair table.
     """
+    if URL == "":
+        raise ValueError("Please set the URL first.")
     engine = create_engine(URL)
     df = pd.read_csv(file_path)
     df.to_sql(table_name, engine, if_exists="append", index=False)
 
 
 def csv2sql_submission(file_path: str, table_name: str):
+    if URL == "":
+        raise ValueError("Please set the URL first.")
     engine = create_engine(URL)
     df = pd.read_csv(file_path)
-    df["code"] = df["codefile"].apply(lambda x: open("data/code/" + x).read())
+    df["code"] = df["codefile"].apply(lambda x: open("./data/code/" + x).read())
     del df["codefile"]
     df.to_sql(table_name, engine, if_exists="append", index=False)
 
 
 def csv2sql_IOpair(file_path: str, table_name: str):
+    if URL == "":
+        raise ValueError("Please set the URL first.")
     engine = create_engine(URL)
     df = pd.read_csv(file_path)
-    df["input"] = df["iofile"].apply(lambda x: open("data/test_io/" + x + ".in").read())
-    df["output"] = df["iofile"].apply(lambda x: open("data/test_io/" + x + ".out").read())
+    df["input"] = df["iofile"].apply(
+        lambda x: open("./data/test_io/" + x + ".in").read()
+    )
+    df["output"] = df["iofile"].apply(
+        lambda x: open("./data/test_io/" + x + ".out").read()
+    )
     del df["iofile"]
     df.to_sql(table_name, engine, if_exists="append", index=False)
