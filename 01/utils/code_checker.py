@@ -6,7 +6,7 @@ import psutil
 
 
 class Code_Checker:
-    FOLDER = "_temp_codes"
+    FOLDER = "_temp_codes/"
 
     def set_io(
         self,
@@ -54,6 +54,7 @@ class Code_Checker:
         """
         self.process = self.get_process()
         if self.process is None:
+            self.clear_files()
             return self.status, self.info, self.used_time, self.used_memory
 
         # Start the timer
@@ -67,7 +68,15 @@ class Code_Checker:
 
         # check the answer
         self.check_answer()
+        self.clear_files()
         return self.status, self.info, self.used_time, self.used_memory
+
+    def clear_files(self):
+        self._clear_file(self.code_path)
+        self._clear_file(self.input_path)
+        self._clear_file(self.output_path)
+        self._clear_file(self.error_path)
+        self._clear_file("test.exe")
 
     def check_answer(self):
         # read the output
@@ -87,14 +96,6 @@ class Code_Checker:
             # Wrong Answer
             self.status = "WA"
             self.info = self._check_difference(self.output, stdout)
-
-        # Delete the temporary files
-        os.remove(self.code_path)
-        os.remove(self.input_path)
-        os.remove(self.output_path)
-        os.remove(self.error_path)
-        if self.language == "C/C++":
-            os.remove("test.exe")
 
     def get_process(self):
         """Get the process of running the code"""
@@ -122,7 +123,6 @@ class Code_Checker:
             # Use java XXX.java directly
             run_cmd = f"java {self.code_path} < {self.input_path} > {self.output_path} 2> {self.error_path}"
             return subprocess.Popen(run_cmd, shell=True)
-        
 
     def _timer_thread(self):
         """A timer thread, which will terminate the testing process when time limit is exceeded"""
@@ -174,3 +174,9 @@ class Code_Checker:
             return f"Line {len(expected_lines) + 1}: expected nothing, but got {actual_lines[len(expected_lines)][0]}..."
         else:
             return "Unknown difference"
+
+    def _clear_file(self, file_path: str):
+        try:
+            os.remove(file_path)
+        except FileNotFoundError:
+            pass

@@ -1,0 +1,8 @@
+problem_id,iofile,score,type
+2,"2-1",10,"test"
+2,"2-2",90,"test"
+3,"3-1",40,"test"
+3,"3-2",60,"test"
+4,"4-1",100,"test"
+5,"5-1",30,"test"
+5,"5-2",70,"test"
