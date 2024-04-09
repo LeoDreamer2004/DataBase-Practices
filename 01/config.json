@@ -1,7 +1,7 @@
 {
-    "host": "127.0.0.1",
-    "user": "practice",
-    "password": "123456",
-    "port": 3306,
-    "db": "practice1"
+    "host":"162.105.146.37",
+    "user":"stu2200010825",
+    "password":"stu2200010825",
+    "port":53306,
+    "db":"stu2200010825"
 }
