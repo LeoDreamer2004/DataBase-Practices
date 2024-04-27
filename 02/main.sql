@@ -4,25 +4,34 @@ drop table if exists emp;
 drop table if exists dept;
 
 create table
-    emp (
-        -- TODO: Basic-1 Constraint for eno in 4 digits, like 0001, 0002, ...
-        eno int primary key auto_increment,
-        ename varchar(20),
-        birthday date,
-        level int between 1 and 5 default 3,
-        -- Basic-5
-        position varchar(20) enum("教师","教务","会计","秘书"),
-        salary int between 2000 and 200000,
-        dno int,
-        -- Basic-2
-        foreign key (dno) references dept (dno) 
+    dept (
+        dno int (4) zerofill not null auto_increment primary key,
+        -- basic-4
+        dname enum ("数学学院", "计算机学院", "智能学院", "电子学院", "元培学院"),
+        budget int,
+        manager int (4) zerofill
     );
 
 create table
-    dept (
-        dno int primary key,
-        -- Basic-4
-        dname varchar(20) enum ("数学学院", "计算机学院", "智能学院", "电子学院", "元培学院"),
-        budget int,
-        manager int
+    emp (
+        -- basic-1
+        eno int (4) zerofill not null auto_increment primary key,
+        ename varchar(20),
+        birthday date,
+        -- basic-6
+        level int default 3 check (
+            level >= 1
+            and level <= 5
+        ),
+        -- basic-5
+        position enum ('教师', '教务', '会计', '秘书'),
+        salary int check (
+            salary >= 2000
+            and salary <= 200000
+        ),
+        dno int (4) zerofill
     );
+
+-- basic-2~3
+alter table emp add foreign key (dno) references dept (dno),
+alter table dept add foreign key (manager) references emp (eno);
