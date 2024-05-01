@@ -1,6 +1,10 @@
+set foreign_key_checks = 0;
+
 drop table if exists dept;
 
 drop table if exists emp;
+
+set foreign_key_checks = 1;
 
 create table
     dept
