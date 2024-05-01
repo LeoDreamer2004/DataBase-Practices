@@ -6,6 +6,7 @@ insert into dept(dname, budget, manager)
 values ('数学学院', 100000, 1);
 set foreign_key_checks = 1;
 
+
 # intermediate 2
 alter table emp
     add constraint check_salary check ((level = 1 and salary between 0 and 5000) or
@@ -13,6 +14,7 @@ alter table emp
                                        (level = 3 and salary between 10001 and 15000) or
                                        (level = 4 and salary between 15001 and 20000) or
                                        (level = 5 and salary > 20000));
+
 
 # intermediate 3
 drop function if exists get_smart_code;
@@ -27,11 +29,10 @@ begin
     declare position_s enum ('教师', '教务', '会计', '秘书');
     declare manager_s int(4) zerofill;
     declare position_code char(2);
-    select emp.eno into eno_s from emp where emp.eno = eno;
-    select dno into dno_s from emp where emp.eno = eno;
-    select birthday into birthday_s from emp where emp.eno = eno;
-    select level into level_s from emp where emp.eno = eno;
-    select position into position_s from emp where emp.eno = eno;
+    select emp.eno, dno, birthday, level, position
+    into eno_s,dno_s,birthday_s,level_s,position_s
+    from emp
+    where emp.eno = eno;
     select manager into manager_s from dept where dept.dno = dno_s;
     if position_s = '教师' then
         set position_code = '01';
