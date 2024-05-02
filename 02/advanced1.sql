@@ -135,6 +135,17 @@ begin
     where dno = new.dno;
 end;
 
+drop trigger if exists set_budget_before_delete_emp;
+create trigger if not exists set_budget_before_delete_emp
+    before delete
+    on emp
+    for each row
+begin
+    update dept
+    set budget = budget - old.salary
+    where dno = old.dno;
+end;
+
 # test trigger
 insert into emp(ename, birthday, level, position, salary, dno)
 values ('test', '1999-01-01', 5, '教务', 10000, 1);

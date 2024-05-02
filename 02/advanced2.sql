@@ -242,15 +242,15 @@ call import_data_tc();
 call import_data_sc();
 
 # advanced 2-4
-# 查看各表所包含的行数，统计(𝑡𝑛𝑜,𝑐𝑛𝑜)的冗余，作为3NF为维护函数依赖所付出的代价
+# 查看各表所包含的行数，统计(tno, cno)的冗余，作为3NF为维护函数依赖所付出的代价
 -- 查看 STC 表所包含的行数
-SELECT COUNT(*) FROM STC;
+select count(*) from STC;
 
 -- 查看 TC 表所包含的行数
-SELECT COUNT(*) FROM TC;
+select count(*) from TC;
 
 -- 查看 SC 表所包含的行数
-SELECT COUNT(*) FROM SC;
+select count(*) from SC;
 
 -- 统计 (tno, cno) 的冗余
-SELECT COUNT(*) - COUNT(DISTINCT tno, cno) FROM STC;
+select count(*) - count(distinct tno, cno) from STC;
