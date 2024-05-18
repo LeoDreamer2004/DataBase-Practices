@@ -18,7 +18,8 @@ insert into family values
 ('司马炎','司马玮'),
 ('司马炎','司马乂'),
 ('司马炎','司马颖'),
-('司马炎','司马炽');
+('司马炎','司马炽'),
+('司马瑰','司马颙');
 
 # 1.找出所有的兄弟关系
 select a.son as brother1, b.son as brother2
