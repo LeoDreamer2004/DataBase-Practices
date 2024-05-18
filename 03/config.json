@@ -1,7 +1,0 @@
-{
-    "host":"rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com",
-    "user":"homework",
-    "password":"Crlcrl123",
-    "port":3306,
-    "db":"practice3"
-}
