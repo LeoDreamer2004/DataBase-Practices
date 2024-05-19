@@ -150,7 +150,6 @@ drop procedure if exists import_data_stc;
 drop procedure if exists import_data_tc;
 drop procedure if exists import_data_sc;
 
-delimiter $$
 create procedure import_data_stc()
 begin
     declare done int default 0;
@@ -161,30 +160,36 @@ begin
     declare continue handler for not found set done = 1;
 
     open cur;
-    read_loop: loop
+    read_loop:
+    loop
         fetch cur into r_sno, r_tno, r_cno;
         if done = 1 then
             leave read_loop;
         end if;
         if not exists(select *
-              from STC
-                       where STC.tno = r_tno and STC.cno <> r_cno)
+                      from STC
+                      where STC.tno = r_tno
+                        and STC.cno <> r_cno)
             and not exists(select *
-              from STC
-                       where STC.sno = r_sno and STC.cno = r_cno and STC.tno <> r_tno)
+                           from STC
+                           where STC.sno = r_sno
+                             and STC.cno = r_cno
+                             and STC.tno <> r_tno)
             and not exists(select *
-              from STC
-                       where STC.sno = r_sno and STC.tno = r_tno and STC.cno = r_cno)
-            then
-            insert into STC(sno, tno, cno) values(r_sno, r_tno, r_cno);
-            insert into SC(sno, cno) values(r_sno, r_cno);
+                           from STC
+                           where STC.sno = r_sno
+                             and STC.tno = r_tno
+                             and STC.cno = r_cno)
+        then
+            insert into STC(sno, tno, cno) values (r_sno, r_tno, r_cno);
+            insert into SC(sno, cno) values (r_sno, r_cno);
         end if;
     end loop;
     close cur;
-end$$
+end;
 
 create procedure import_data_tc()
-    begin
+begin
     declare done int default 0;
     declare r_sno int;
     declare r_tno int;
@@ -193,27 +198,30 @@ create procedure import_data_tc()
     declare continue handler for not found set done = 1;
 
     open cur;
-    read_loop: loop
+    read_loop:
+    loop
         fetch cur into r_sno, r_tno, r_cno;
         if done = 1 then
             leave read_loop;
         end if;
         if not exists(select *
-              from TC
-                       where TC.tno = r_tno and TC.cno <> r_cno)
+                      from TC
+                      where TC.tno = r_tno
+                        and TC.cno <> r_cno)
             and not exists(select *
-              from TC
-                       where TC.tno = r_tno and TC.cno = r_cno)
-            then
-            insert into TC(tno, cno) values(r_tno, r_cno);
+                           from TC
+                           where TC.tno = r_tno
+                             and TC.cno = r_cno)
+        then
+            insert into TC(tno, cno) values (r_tno, r_cno);
         end if;
     end loop;
     close cur;
-end$$
+end;
 
 
 create procedure import_data_sc()
-    begin
+begin
     declare done int default 0;
     declare r_sno int;
     declare r_tno int;
@@ -222,21 +230,23 @@ create procedure import_data_sc()
     declare continue handler for not found set done = 1;
 
     open cur;
-    read_loop: loop
+    read_loop:
+    loop
         fetch cur into r_sno, r_tno, r_cno;
         if done = 1 then
             leave read_loop;
         end if;
         if not exists(select *
-              from SC
-                       where SC.sno = r_sno and SC.cno = r_cno)
-            then
-            insert into SC(sno, cno) values(r_sno, r_cno);
+                      from SC
+                      where SC.sno = r_sno
+                        and SC.cno = r_cno)
+        then
+            insert into SC(sno, cno) values (r_sno, r_cno);
         end if;
     end loop;
     close cur;
-end$$
-delimiter ;
+end;
+
 call import_data_stc();
 call import_data_tc();
 call import_data_sc();
@@ -244,13 +254,17 @@ call import_data_sc();
 # advanced 2-4
 # 查看各表所包含的行数，统计(tno, cno)的冗余，作为3NF为维护函数依赖所付出的代价
 -- 查看 STC 表所包含的行数
-select count(*) from STC;
+select count(*)
+from STC;
 
 -- 查看 TC 表所包含的行数
-select count(*) from TC;
+select count(*)
+from TC;
 
 -- 查看 SC 表所包含的行数
-select count(*) from SC;
+select count(*)
+from SC;
 
 -- 统计 (tno, cno) 的冗余
-select count(*) - count(distinct tno, cno) from STC;
+select count(*) - count(distinct tno, cno)
+from STC;
