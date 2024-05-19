@@ -32,17 +32,9 @@ ts_ranked as (
         ts_code,
         trade_date,
         rank_low,
-        rank() over (partition by ts_code order by trade_date) as ts_rank
-    from (
-        select
-            ts_code,
-            trade_date,
-            rank_low,
-            row_number() over (partition by ts_code order by trade_date desc ) as row_num
-        from
-            ranked_low
-    ) as sub
-    where row_num <= 9
+        rank() over (partition by ts_code order by trade_date rows between 8 preceding and current row) as ts_rank
+    from
+        ranked_low
 )
 
 select
