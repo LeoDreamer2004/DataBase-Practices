@@ -66,7 +66,7 @@ with alpha_calc as (
         stock
 ),
 
-# 计算alpha033排名
+# 计算rank((-1 * ((1 - (open / close))^1)))
 ranked_alpha as (
     select
         ts_code,
