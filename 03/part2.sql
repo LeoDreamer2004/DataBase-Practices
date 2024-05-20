@@ -13,38 +13,70 @@ create table stock(
 );
 
 
-
-# 计算alpha004
-# Alpha#4: (-1 * Ts_Rank(rank(low), 9))
-# 计算最低价排名
-with ranked_low as (
+# 计算alpha005
+# Alpha#5: (rank((open - (sum(vwap, 10) / 10))) * (-1 * abs(rank((close - vwap)))))
+# 计算vwap
+with vwap_calc as (
     select
         ts_code,
         trade_date,
-        low,
-        rank() over (partition by trade_date order by low) as rank_low
-    from
+        amount / vol as vwap
+   from
         stock
 ),
-# 计算最近九天最低价排名
-ts_ranked as (
+# 计算sum(vwap, 10) / 10
+avg_vwap as (
     select
         ts_code,
         trade_date,
-        rank_low,
-        rank() over (partition by ts_code order by trade_date rows between 8 preceding and current row) as ts_rank
+        avg(vwap) over (partition by ts_code order by trade_date rows between 9 preceding and current row) as avg_vwap_10
     from
-        ranked_low
+        vwap_calc
+),
+# 计算rank((open - (sum(vwap, 10) / 10)))
+ranked_open as (
+    select
+        a.ts_code,
+        a.trade_date,
+        rank() over (partition by a.trade_date order by s.open - avg_vwap_10) as rank_open
+    from
+        avg_vwap as a
+    join
+        stock as s on a.ts_code = s.ts_code and a.trade_date = s.trade_date
+),
+# 计算rank((close - vwap))
+ranked_close as (
+    select
+        a.ts_code,
+        a.trade_date,
+        rank() over (partition by a.trade_date order by s.close - a.vwap) as rank_close
+    from
+        vwap_calc as a
+    join
+        stock as s on a.ts_code = s.ts_code and a.trade_date = s.trade_date
+),
+# 使用上述结果，完成alpha005的计算
+final_calc as (
+    select
+        o.ts_code,
+        o.trade_date,
+        o.rank_open,
+        cast(o.rank_open as signed) * -1 * cast(abs(c.rank_close) as signed) as alpha5
+    from
+        ranked_open o
+    join
+        ranked_close c on o.ts_code = c.ts_code and o.trade_date = c.trade_date
 )
 
 select
     ts_code,
     trade_date,
-    -1 * cast(ts_rank as signed) as alpha4
+    alpha5
 from
-    ts_ranked
+    final_calc
 order by
-    alpha4 desc ;
+    alpha5 desc;
+
 
 # 计算alpha033
 # Alpha#33: rank((-1 * ((1 - (open / close))^1)))
@@ -63,7 +95,6 @@ ranked_alpha as (
     select
         ts_code,
         trade_date,
-        alpha_value,
         rank() over (partition by trade_date order by alpha_value) as alpha33
     from
         alpha_calc
@@ -77,6 +108,7 @@ from
     ranked_alpha
 order by
     alpha33 desc;
+
 
 
 # 计算alpha057
@@ -232,6 +264,7 @@ ratios as (
     join
         vwap_calc v on s.ts_code = v.ts_code and s.trade_date = v.trade_date
 ),
+# 使用上述结果，完成alpha083的计算
 alpha_83_calc as (
     select
         r.ts_code,
