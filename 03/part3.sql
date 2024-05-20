@@ -1,4 +1,5 @@
 ### Problem 1
+drop table if exists customerPerson;
 create temporary table customerPerson as
     (select *
      from customer
@@ -6,6 +7,7 @@ create temporary table customerPerson as
      limit 30);
 
 # 先读取 Customer 名称和地址信息
+drop table if exists basicInfo;
 create temporary table basicInfo as
     (select c.CustomerID,
             concat(p.FirstName, ' ', p.LastName) as customerName,
@@ -21,6 +23,7 @@ create temporary table basicInfo as
      LIMIT 10);
 
 # 读取 Customer 购买的 Product 信息，每个用户至多展示 5 个 Product
+drop table if exists productInfo;
 create temporary table productInfo as
     (select CustomerID,
             Name,
@@ -39,8 +42,7 @@ create temporary table productInfo as
      order by CustomerID, totalAmount desc);
 
 # 存储 JSON
-select CustomerID,
-       json_object('customerId', CustomerID,
+select json_object('customerId', CustomerID,
                    'customerName', customerName,
                    'addr', json_object('country', country, 'city', City),
                    'products',
@@ -73,9 +75,10 @@ from basicInfo
 group by CustomerID, customerName, country, City;
 
 # 指定一个country，返回位于该country的customer
+set @country = 'Australia';
 select *
 from customerInfo
-where customer -> "$.addr.country" = 'Australia';
+where customer -> "$.addr.country" = @country;
 
 # 计算每种product的总金额
 select ProductName, totalAmount
