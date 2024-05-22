@@ -28,7 +28,7 @@ with grandparent as(
 ```
 然后使用这个通用表，找出所有爷爷相同但父亲不同的两个人
 ## 窗口查询
-选择了Alpha101中的四个公式进行计算：
+选择 了Alpha101 中的四个公式进行计算：
 - Alpha#5: (rank((open - (sum(vwap, 10) / 10))) * (-1 * abs(rank((close - vwap)))))
 - Alpha#33: rank((-1 * ((1 - (open / close))^1)))
 - Alpha#57: (0 - (1 * ((close - vwap) / decay_linear(rank(ts_argmax(close, 30)), 2))))
@@ -37,7 +37,7 @@ low) / (sum(close, 5) / 5)) / (vwap - close)))
 
 建立股票信息表`stock`，使用`read.py`将数据导入数据库中。
 
-以Alpha#5解释具体计算过程：
+以 Alpha#5 解释具体计算过程：
 
 使用CTE语句逐步进行计算(以下为代码中关键语句)
 
@@ -130,3 +130,78 @@ json_table(customer -> "$.products", '$[*]'
 ```
 
 ## 向量数据库
+
+向量数据库的部分使用本地的 PostgreSQL 数据库完成。运行前请设置好数据库的用户名和密码。 同时，请修改所有带有 `WARNING` 的注释。
+
+### 问题一：向量数据库的创建
+
+首先，我们创建两个表来存储倚天屠龙记的内容和人物信息，并将数据导入数据库。然后，我们使用出现向量的方式来计算共现表。
+
+首先计算出现向量：
+
+```postgresql
+create or replace function getBitString(pName text) returns bit(45) as
+$$
+declare
+    bitString bit(45) := repeat('0', 45)::bit(45);
+    idx       int     := 0;
+begin
+    for idx in 0..44
+        loop
+            if exists (select 1 from yttlj where phaseId = idx and phaseText like '%' || pName || '%') then
+                bitString := bitString | (1::bit(45) << idx);
+            end if;
+        end loop;
+    return bitString;
+end;
+$$ language plpgsql;
+
+alter table person add column phaseContains bit(45);
+-- update person
+update person
+set phaseContains = getBitString(personName)
+where person.personid < 1000; -- make sql happy
+```
+
+然后，根据共现向量计算共现表：
+
+```postgresql
+-- create function to count bits
+create or replace function bitCount(bitString bit(45)) returns int as
+$$
+declare
+    count int := 0;
+    idx   int;
+begin
+    for idx in 0..44
+        loop
+            if (bitString & (1::bit(45) << idx)) <> 0::bit(45) then
+                count := count + 1;
+            end if;
+        end loop;
+    return count;
+end;
+$$ language plpgsql;
+
+-- update coCurrent
+insert into coCurrent
+select p1.personId, p2.personId, bitCount(p1.phaseContains & p2.phaseContains)
+from person p1
+         join person p2 on p1.personId <= p2.personId;
+```
+
+### 问题二：使用向量数据库查询人物的相似度
+
+首先，我们根据共现矩阵计算每个任务对应的向量，这部分通过提供的 Python 脚本完成。计算完成后，将数据存入数据库。
+
+最后，使用余弦相似度计算两个人物之间的相似度：
+
+```postgresql
+select p1.personName, p2.personName, p1.word_vector <=> p2.word_vector as similarity
+from person p1, person p2
+where p1.personId < p2.personId
+order by similarity 
+limit 20;
+```
+
+其中，`<=>` 是 PostgreSQL 的向量扩展中的余弦相似度函数。
