@@ -1,25 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="practice2@localhost" uuid="b13bc706-9717-4035-971c-6ab83f249002">
+    <data-source source="LOCAL" name="practice4@rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com" uuid="b2018367-6e4c-49f7-8999-7027ae1d9092">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/practice2</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="practice3@rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com" uuid="b2018367-6e4c-49f7-8999-7027ae1d9092">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com:3306/practice3</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="practice3@localhost" uuid="cf7876c1-b024-4c75-aae9-f55a9e3feff2">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/practice3</jdbc-url>
+      <jdbc-url>jdbc:mysql://rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com:3306/practice4</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
     <data-source source="LOCAL" name="practice4@rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com" uuid="beee95bf-867d-47a6-ad76-e81281a1fd93">
