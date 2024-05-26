@@ -165,3 +165,128 @@ set @avg_happiness_score = (select avg(happiness_score)
                             from happiness);
 set @avg_economy = (select avg(economy)
                     from happiness);
+set @avg_family = (select avg(family)
+                   from happiness);
+set @avg_health = (select avg(health)
+                   from happiness);
+set @avg_freedom = (select avg(freedom)
+                    from happiness);
+set @avg_trust = (select avg(trust)
+                  from happiness);
+set @avg_generosity = (select avg(generosity)
+                       from happiness);
+set @avg_dystopia_residual = (select avg(dystopia_residual)
+                              from happiness);
+
+set @std_dev_happiness_score =
+        (select sqrt(avg(happiness_score * happiness_score) - avg(happiness_score) * avg(happiness_score))
+         from happiness);
+set @std_dev_economy = (select sqrt(avg(economy * economy) - avg(economy) * avg(economy))
+                        from happiness);
+set @std_dev_family = (select sqrt(avg(family * family) - avg(family) * avg(family))
+                       from happiness);
+set @std_dev_health = (select sqrt(avg(health * health) - avg(health) * avg(health))
+                       from happiness);
+set @std_dev_freedom = (select sqrt(avg(freedom * freedom) - avg(freedom) * avg(freedom))
+                        from happiness);
+set @std_dev_trust = (select sqrt(avg(trust * trust) - avg(trust) * avg(trust))
+                      from happiness);
+set @std_dev_generosity = (select sqrt(avg(generosity * generosity) - avg(generosity) * avg(generosity))
+                           from happiness);
+set @std_dev_dystopia_residual = (select sqrt(avg(dystopia_residual * dystopia_residual) - avg(dystopia_residual) *
+                                                                                           avg(dystopia_residual))
+                                  from happiness);
+
+
+select country,
+       region,
+       happiness_rank,
+       (happiness_score - @avg_happiness_score) / @std_dev_happiness_score       as z_score_happiness_score,
+       (economy - @avg_economy) / @std_dev_economy                               as z_score_economy,
+       (family - @avg_family) / @std_dev_family                                  as z_score_family,
+       (health - @avg_health) / @std_dev_health                                  as z_score_health,
+       (freedom - @avg_freedom) / @std_dev_freedom                               as z_score_freedom,
+       (trust - @avg_trust) / @std_dev_trust                                     as z_score_trust,
+       (generosity - @avg_generosity) / @std_dev_generosity                      as z_score_generosity,
+       (dystopia_residual - @avg_dystopia_residual) / @std_dev_dystopia_residual as z_score_dystopia_residual
+from happiness;
+
+
+
+####################################
+############ Problem 03 ############
+####################################
+
+set @row_num = (select count(*)
+                from happiness);
+
+
+set @max_economy = (select max(economy)
+                    from happiness);
+set @min_economy = (select min(economy)
+                    from happiness
+                    where economy != 0);
+update happiness
+set economy = (select (@max_economy - @min_economy) * happiness_rank / @row_num + @min_economy)
+where economy = 0;
+
+
+set @max_family = (select max(family)
+                   from happiness);
+set @min_family = (select min(family)
+                   from happiness
+                   where family != 0);
+update happiness
+set family = (select (@max_family - @min_family) * happiness_rank / @row_num + @min_family)
+where family = 0;
+
+
+set @max_health = (select max(health)
+                   from happiness);
+set @min_health = (select min(health)
+                   from happiness
+                   where health != 0);
+update happiness
+set health = (select (@max_health - @min_health) * happiness_rank / @row_num + @min_health)
+where health = 0;
+
+
+set @max_freedom = (select max(freedom)
+                    from happiness);
+set @min_freedom = (select min(freedom)
+                    from happiness
+                    where freedom != 0);
+update happiness
+set freedom = (select (@max_freedom - @min_freedom) * happiness_rank / @row_num + @min_freedom)
+where freedom = 0;
+
+
+set @max_trust = (select max(trust)
+                  from happiness);
+set @min_trust = (select min(trust)
+                  from happiness
+                  where trust != 0);
+update happiness
+set trust = (select (@max_trust - @min_trust) * happiness_rank / @row_num + @min_trust)
+where trust = 0;
+
+
+set @max_generosity = (select max(generosity)
+                       from happiness);
+set @min_generosity = (select min(generosity)
+                       from happiness
+                       where generosity != 0);
+update happiness
+set generosity = (select (@max_generosity - @min_generosity) * happiness_rank / @row_num + @min_generosity)
+where generosity = 0;
+
+
+set @max_dystopia_residual = (select max(dystopia_residual)
+                              from happiness);
+set @min_dystopia_residual = (select min(dystopia_residual)
+                              from happiness
+                              where dystopia_residual != 0);
+update happiness
+set dystopia_residual = (select (@max_dystopia_residual - @min_dystopia_residual) * happiness_rank / @row_num +
+                                @min_dystopia_residual)
+where dystopia_residual = 0;
