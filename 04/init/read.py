@@ -1,16 +1,26 @@
+import pymysql
 from pymysql.cursors import Cursor
 import pandas as pd
+import json
 from sqlalchemy import create_engine
+
+URL = ""
+
+
+def read_config(path: str) -> dict:
+    """
+    Read a json file and return a dictionary of configuration.
+    """
+    with open(path) as f:
+        return json.load(f)
 
 
 def fetch_cursor(cursor: Cursor):
     """
     Combine the description and data by pymysql to a list of dictionary.
-    >>> a = cursor.description
-    >>> a
+    >>> cursor.description
     (('id', 3, None, 11, 11, 0, False), ('name', 253, None, 255, 255, 0, False))
-    >>> b = cursor.fetchall()
-    >>> b
+    >>> cursor.fetchall()
     ((1, 'Alice'), (2, 'Bob'))
     >>> fetch_cursor(cursor)
     [{'id': 1, 'name': 'Alice'}, {'id': 2, 'name': 'Bob'}]
@@ -20,11 +30,13 @@ def fetch_cursor(cursor: Cursor):
     return [dict(zip([x[0] for x in description], row)) for row in data]
 
 
-URL = ""
-
-
-def setURL(user, password, host, port, database):
+def set_URL(config: dict):
     global URL
+    user = config["user"]
+    password = config["password"]
+    host = config["host"]
+    port = config["port"]
+    database = config["db"]
     URL = f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}"
 
 
@@ -41,26 +53,10 @@ def csv2sql(file_path: str, table_name: str):
     df.to_sql(table_name, engine, if_exists="append", index=False)
 
 
-def csv2sql_submission(file_path: str, table_name: str):
-    if URL == "":
-        raise ValueError("Please set the URL first.")
-    engine = create_engine(URL)
-    df = pd.read_csv(file_path)
-    df["code"] = df["codefile"].apply(lambda x: open("./data/code/" + x).read())
-    del df["codefile"]
-    df.to_sql(table_name, engine, if_exists="append", index=False)
-
-
-def csv2sql_IOpair(file_path: str, table_name: str):
-    if URL == "":
-        raise ValueError("Please set the URL first.")
-    engine = create_engine(URL)
-    df = pd.read_csv(file_path)
-    df["input"] = df["iofile"].apply(
-        lambda x: open("./data/test_io/" + x + ".in").read()
-    )
-    df["output"] = df["iofile"].apply(
-        lambda x: open("./data/test_io/" + x + ".out").read()
-    )
-    del df["iofile"]
-    df.to_sql(table_name, engine, if_exists="append", index=False)
+if __name__ == "__main__":
+    pymysql.install_as_MySQLdb()
+    config = read_config("./config.json")
+    db = pymysql.connect(**config)
+    cursor = db.cursor()
+    set_URL(config)
+    db.commit()

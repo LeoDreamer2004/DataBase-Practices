@@ -7,29 +7,42 @@
 本次实习的目标是处理非关系数据
 
 ## 递归查询
+
 ### 问题一：找出所有的兄弟关系
+
 使用select语句找出表中有相同父亲的两个人即可，在限制条件中使用“<”来避免重复。
+
 ### 问题二：找出所有的祖先关系
+
 使用`with recursive`关键字进行递归查询，该查询由基础查询和递归查询组成，基础查询返回递归查询的初始行，递归查询引用自身，直到返回空集。
-```mysql
+
+```sql
 with recursive Ancestors as (
     # 基础查询
     union all
     # 递归查询
 )
 ```
+
 在基础查询部分，查询出所有直接的父子关系，然后递归查询所有间接祖先关系，并将二者合并。
+
 ### 问题三：找出所有的堂兄弟关系
+
 使用CTE，首先找出所有爷孙关系
+
 ```mysql
 with grandparent as(
     # 找出所有爷孙关系
 )
 ```
+
 然后使用这个通用表，找出所有爷爷相同但父亲不同的两个人
+
 ## 窗口查询
+
 选择 了Alpha101 中的四个公式进行计算：
-- Alpha#5: (rank((open - (sum(vwap, 10) / 10))) * (-1 * abs(rank((close - vwap)))))
+
+- Alpha#5: (rank((open - (sum(vwap, 10) / 10))) *(-1* abs(rank((close - vwap)))))
 - Alpha#33: rank((-1 * ((1 - (open / close))^1)))
 - Alpha#57: (0 - (1 * ((close - vwap) / decay_linear(rank(ts_argmax(close, 30)), 2))))
 - Alpha#83: ((rank(delay(((high - low) / (sum(close, 5) / 5)), 2)) * rank(rank(volume))) / (((high -
@@ -70,6 +83,7 @@ final_calc as (
 ### 问题一：JSON的创建
 
 对于每个单个的用户，题目要求的 JSON 文件形如这样的格式：
+
 ```json
 {
   "customerId": 20,
@@ -104,7 +118,7 @@ create temporary table productInfo ...;
 
 首先建表使得其中一列是 `customerId`，另一列是与之对应的 JSON，创建过程中，实际上可以从 JSON 自动解析 `customerId`，从而不必手动输入。
 
-```mysql
+```sql
 create temporary table customerInfo
 (
     customer   json,
