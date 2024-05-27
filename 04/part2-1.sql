@@ -179,5 +179,6 @@ from happiness,
 # 计算health列和happiness_score列的互信息
 select mutual_information() as mutual_information_health_happiness;
 
+# 删除临时创建的表
 drop table if exists temp_intervals_x;
 drop table if exists temp_intervals_y;
