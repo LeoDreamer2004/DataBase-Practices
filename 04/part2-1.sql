@@ -86,8 +86,8 @@ from happiness,
      (select min(happiness_score) as min_val,max(happiness_score) as max_val from happiness) as min_max,
     (select (max(happiness_score) - min(happiness_score)) / 40 as interval_width from happiness) as interval_width;
 
-# 计算economy列的熵
-select entropy() as entropy_economy;
+# 计算happiness_score列的熵
+select entropy() as entropy_happiness_score;
 
 # 创建临时表temp_intervals，将economy列的值分为40个区间
 drop table if exists temp_intervals;
