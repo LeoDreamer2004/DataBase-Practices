@@ -131,7 +131,7 @@ create temporary table user_movie_rating as
      from ratings
      order by userId, movieId);
 
-# 用户关系视图
+# 用户关系表
 drop table if exists user_user_relation;
 create temporary table user_user_relation as
     (select a.userId as user1, b.userId as user2, count(*) as relation
