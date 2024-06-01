@@ -1,18 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="practice4@rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com" uuid="b2018367-6e4c-49f7-8999-7027ae1d9092">
+    <data-source source="LOCAL" name="practice4@rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com" uuid="5516215a-1388-4c35-a4b5-19617e3df971">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com:3306/practice4</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="practice4@rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com" uuid="beee95bf-867d-47a6-ad76-e81281a1fd93">
+    <data-source source="LOCAL" name="practice5@rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com" uuid="3d6e5df1-03b9-4889-a0c7-42b00b4adb25">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com:3306/practice4</jdbc-url>
+      <jdbc-url>jdbc:mysql://rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com:3306/practice5</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="stu2200010626@162.105.146.37" uuid="88844703-9fa5-4afe-97f9-6e7e0b4bffe1">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://162.105.146.37:53306/stu2200010626</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="practice5@rm-cn-83l3r0ckl00095po.rwlb.rds.aliyuncs.com" uuid="38b9e54b-69af-4e2c-a0a1-1fda3fbcaf80">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://rm-cn-83l3r0ckl00095po.rwlb.rds.aliyuncs.com:5432/practice5</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
