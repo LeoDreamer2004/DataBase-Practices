@@ -22,7 +22,7 @@ begin
 end;
 
 
-call insert_t1_random(50000);
+call insert_t1_random(10000);
 
 create index idx_t1_a on t1 (a);
 create index idx_t1_b on t1 (b);
@@ -49,7 +49,7 @@ begin
         end while;
 end;
 
-call insert_t2_random(10000);
+call insert_t2_random(50000);
 
 create index idx_t2_a on t2 (a);
 create index idx_t2_b on t2 (b);
@@ -87,7 +87,11 @@ where a > 500
 #### Test for JOIN_ORDER #####
 ##############################
 
-# without hint (1 s 247 ms)
+truncate t1;
+
+call insert_t1_random(20000);
+
+# without hint (1 s 931 ms)
 select *
 from t1
          join t2 on t1.a = t2.a
@@ -100,7 +104,7 @@ from t1
          join t2 on t1.a = t2.a
     and t1.b = t2.b;
 
-# with hint (1 s 35 ms)
+# with hint (1 s 107 ms)
 select /*+ JOIN_ORDER(t1, t2) */ *
 from t1
          join t2 on t1.a = t2.a
