@@ -1,4 +1,4 @@
-# 数据库概论第三次实习作业
+# 数据库概论第四次实习作业
 
 > 原梓轩 2200010825
 > 陈润璘 2200010848
@@ -7,6 +7,46 @@
 本次实习的目标是基于SQL去实践完成数据科学项目中的两个重要步骤：数据预处理和数据挖掘算法，以及基于此进行分析型的综合查询
 
 ## 练习一：基于SQL的数据预处理
+
+### 题目一：数据探索
+
+使用 SQL 语句计算数据的平均值、最值、中位数、上下四分位数、标准差、方差、直方图分布。其中中位数没有直接的 SQL 函数，可以通过先计算数据的排序，然后取中间值得到。
+
+```mysql
+select avg(mid_val) as median
+from (select x.happiness_score as mid_val
+      from (select @row_num := @row_num + 1 as row_num, happiness_score
+            from happiness,
+                 (select @row_num := 0) r
+            order by happiness_score) x,
+           (select count(*) as total_rows
+            from happiness) total
+      where x.row_num in (floor((total_rows + 1) / 2), floor((total_rows + 2) / 2))) mid;
+```
+
+上下四分位数也可以通过类似的方法得到，只需要将中位数的计算稍作修改即可。
+
+### 题目二：归一化
+
+这一部分使用 SQL 实现最大-最小规范化和 z-score 规范化。
+
+- 最大-最小规范化：我们先计算出每一列的最大值和最小值，然后通过 SQL 语句把每一条记录映射到 0-1 之间的一个值。
+- z-score 规范化：我们先计算出每一列的均值和标准差，然后通过 SQL 语句把每一条记录映射到均值为 0，标准差为 1 的正态分布上。
+
+### 题目三：补充缺失值
+
+对于缺失值，我们根据 happiness 的排名，按照线性的方式进行插值。首先我们需要计算出每一条记录的排名，然后根据排名和该项指标的最大、最小值进行线性插值。
+
+```mysql
+set @max_economy = (select max(economy)
+                    from happiness);
+set @min_economy = (select min(economy)
+                    from happiness
+                    where economy != 0);
+update happiness
+set economy = (select (@max_economy - @min_economy) * happiness_rank / @row_num + @min_economy)
+where economy = 0;
+```
 
 ## 练习二：基于SQL的数据挖掘算法
 
