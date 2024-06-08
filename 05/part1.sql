@@ -20,11 +20,19 @@ end;
 call insert_random_data(100000);
 
 # 观察在A列上建立索引前后的性能差异
+# 分组
 # 369ms
 select A, count(*)
 from testIndex
 group by A
 order by A;
+
+# 自连接
+# 105ms
+select t1.A, t2.A
+from testIndex t1
+join testIndex t2
+on t1.A = t2.A;
 
 create index idx_A on testIndex(A);
 
@@ -33,6 +41,12 @@ select A, count(*)
 from testIndex
 group by A
 order by A;
+
+#131ms
+select t1.A, t2.A
+from testIndex t1
+join testIndex t2
+on t1.A = t2.A;
 
 # 针对 select B where A 类型的查询，观察基于(A, B)的组合索引相对于A上的单列索引的性能提升
 # 474ms
