@@ -60,7 +60,6 @@ group by app
 order by mx desc;
 
 # 基于游标的查询
-# TODO：这个我不会写，查询结果不对
 drop procedure if exists max_concurrent_sessions;
 create procedure max_concurrent_sessions()
 begin
@@ -72,6 +71,7 @@ begin
     declare mx int default 0;
     declare prev_app varchar(10);
 
+    # 使用游标逐行搜索
     declare cur cursor for
         select app , starttime as ts, 1 as type from Sessions
         union all

@@ -29,5 +29,19 @@
       <jdbc-url>jdbc:postgresql://rm-cn-83l3r0ckl00095po.rwlb.rds.aliyuncs.com:5432/practice5</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="@rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com" uuid="bc0c5c22-e670-4b71-b1aa-c814f85fbe11">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://rm-cn-em93osvdn001h9xo.rwlb.rds.aliyuncs.com:3306/</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="@localhost" uuid="4aa66661-01a2-40f2-9dc0-d013b343d0cd">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

@@ -19,6 +19,16 @@
 
 
 ## 任务二：最大并发间隔问题的不同实现方式性能比较
+本部分详见`part2.ipynb`，sql语句单独放在`part2.sql`中。
+
+首先创建表`sessions(keycol, app, usr, host, starttime, endtime)`，并在`starttime`和`endtime`上建立索引。
+
+随后定义函数`insert_data(n)`用于插入随机数据。
+
+依据给出的脚本，实现了集合、游标、窗口函数三种不同的查询，封装在函数`select_with_set()`, `select_with_cursor()`, `select_with_window()`中。
+
+最后使用不同数据规模，对比三种查询的性能并绘制图表。观察发现，随着数据规模的增大，集合查询的性能下降严重，总体性能游标优于窗口优于集合。
+![](./pic/output.png)
 
 ## 任务三：SQL Hint
 
